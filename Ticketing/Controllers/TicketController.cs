@@ -17,7 +17,7 @@ namespace Ticketing.Controllers
             _bus = bus;
         }
 
-        [HttpPost]
+        [HttpPost("Create")]
         public async Task<IActionResult> CreateTicket(Ticket ticket)
         {
             if (ticket != null)
@@ -26,9 +26,9 @@ namespace Ticketing.Controllers
                 Uri uri = new Uri("rabbitmq://localhost/ticketQueue");
                 var endPoint = await _bus.GetSendEndpoint(uri);
                 await endPoint.Send(ticket);
-                return Ok();
+                return Ok(new { success = true, message = "Ticket Created Successfully" });
             }
-            return BadRequest();
+            return BadRequest(new { success = false, message = "Failed to create ticket" });
         }
     }
 }
